@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CattleGrow | Connect your herd. Run your ranch.</title>
+    <meta name="description"
+        content="CattleGrow is the operating system for modern cattle operations—combining livestock data, farm management, CRM, ERP, and market connectivity in one real-time platform.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ag-green': '#2D5A27',
+                        'ag-dark': '#0F172A',
+                        'ag-light': '#F8FAFC',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-ag-dark text-white antialiased">
+    <!-- Navbar -->
+    <nav id="navbar"
+        class="fixed w-full z-50 transition-all duration-300 py-6 px-6 md:px-12 bg-transparent text-ag-dark">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="Images/Gemini_Generated_Image_clv33yclv33yclv3-removebg-preview.png" alt="CattleGrow Logo"
+                    class="h-20 w-auto">
+                <div class="text-4xl md:text-5xl brand-font uppercase text-white">
+                    CATTLEGROW
+                </div>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium uppercase tracking-widest text-white">
+                <a href="#hardware" class="hover:text-ag-green transition-colors">Technology</a>
+                <a href="#feeding" class="hover:text-ag-green transition-colors">Feeding</a>
+                <a href="#health" class="hover:text-ag-green transition-colors">Health</a>
+                <a href="#business" class="hover:text-ag-green transition-colors">Analytics</a>
+                <a href="https://cattle-dashboard-app.vercel.app" target="_blank" rel="noopener noreferrer"
+                    class="hover:text-ag-green transition-colors border-b-2 border-ag-green pb-1">App Login</a>
+            </div>
+            <div class="md:hidden text-white">
+                <!-- Mobile Menu Button Placeholder -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Video Background -->
+        <video autoplay muted loop playsinline
+            class="absolute w-auto min-w-full min-h-full max-w-none z-0 object-cover opacity-80">
+            <source src="Video/IntroV1.2.mp4" type="video/mp4">
+            Your browser does not support videos.
+        </video>
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-white z-1"></div>
+
+        <!-- Content -->
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto fade-in-up">
+            <div
+                class="mb-6 inline-block bg-ag-green/20 backdrop-blur-sm border border-ag-green/30 px-4 py-2 rounded-full">
+                <div class="text-sm md:text-base brand-font uppercase text-white">
+                    CATTLEGROW
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-8 text-white">
+                The Intelligent Cattle Ecosystem. <br>
+                <span class="text-white font-light italic">Powered by Proprietary Hardware.</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-100 mb-10 font-light max-w-3xl mx-auto">
+                Connect the field, the chute, and the office. Advanced software driven by our biometric GPS collars and
+                real-time RFID reading technology.
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <a href="#contacto"
+                    class="bg-ag-green text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-ag-dark transition-all duration-300 shadow-xl flex items-center group">
+                    Request Free Demo
+                </a>
+                <a href="#hardware"
+                    class="text-white border border-white/30 backdrop-blur-md px-8 py-4 rounded-full font-medium hover:bg-white/10 transition-colors">
+                    View Equipment
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 0: THE OPERATING SYSTEM (Impact Intro) -->
+    <section id="os-overview" class="bento-section bg-white text-ag-dark">
+        <div class="max-w-4xl mx-auto text-center px-6 mb-16">
+            <span class="subtitle text-ag-green">Our Vision</span>
+            <h2 class="text-4xl md:text-6xl font-bold mb-8">The operating system for modern cattle operations</h2>
+            <p class="text-xl md:text-2xl text-slate-600 font-light leading-relaxed">
+                CattleGrow connects sensors, RFID identification, livestock intelligence, feeding systems, CRM, ERP, and
+                AI into one real-time platform—giving dairy farms, feedlots, and livestock operations the visibility,
+                control, and business intelligence to make better decisions every day.
+            </p>
+        </div>
+
+        <div class="bento-container-v2">
+            <div class="bento-item bento-v2-1">
+                <img src="Images/C6.png" alt="Operational Visibility">
+            </div>
+            <div class="bento-item bento-v2-2">
+                <img src="Images/C7.png" alt="Sensor Integration">
+            </div>
+            <div class="bento-item bento-v2-3">
+                <img src="Images/C8.png" alt="Livestock Intelligence">
+            </div>
+            <div class="bento-item bento-v2-4">
+                <img src="Images/C9.png" alt="ERP & CRM Workflows">
+            </div>
+            <div class="bento-item bento-v2-5">
+                <img src="Images/C10.png" alt="AI & Predictive Data">
+            </div>
+            <div class="bento-v2-text pr-12">
+                <div class="space-y-4">
+                    <p class="text-slate-600 leading-relaxed font-light">
+                        Modern cattle operations are managing far more than animals. They are managing feeding,
+                        identification, workflows, inventory, suppliers, customers, and business performance.
+                    </p>
+                    <p class="text-lg font-bold text-ag-dark">
+                        CattleGrow brings all of these layers together in one connected ecosystem.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="max-w-6xl mx-auto px-6 mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 text-slate-600 font-light leading-relaxed">
+            <div class="space-y-6">
+                <p>
+                    Through advanced engineering, proprietary technology, sensors, and RFID-based identification, the
+                    platform captures real-time information directly from the field and transforms it into clear,
+                    actionable intelligence. Every animal can be identified. Every key process can be tracked.
+                </p>
+                <p>
+                    But CattleGrow goes beyond monitoring. It also functions as a complete CRM and ERP for the
+                    operation, connecting livestock data with business workflows, supplier coordination, and human
+                    resources. This creates a single source of truth across the entire business.
+                </p>
+            </div>
+            <div class="space-y-6">
+                <p>
+                    The platform also supports online diet systems and connected nutrition workflows, allowing producers
+                    and specialists to manage feeding strategies with greater precision, consistency, and speed.
+                </p>
+                <p>
+                    With AI helping reveal patterns and surface insights, CattleGrow turns complexity into clarity and
+                    real-time data into meaningful action—one platform, one ecosystem, and one real-time view of the
+                    entire operation.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: SMART CATTLEGROW® COLLAR -->
+    <section id="hardware" class="even-section bg-white text-ag-dark">
+        <div class="section-50-50 even-section">
+            <div class="section-image">
+                <div class="mockup-container">
+                    <img src="Images/C1.png" alt="Smart CattleGrow® Collar Interface">
+                </div>
+            </div>
+            <div class="section-content">
+                <span class="subtitle">Intelligent monitoring for more efficient livestock management</span>
+                <h2>Smart CattleGrow® <br>Collar Intelligence.</h2>
+                <p>
+                    The Smart CattleGrow® Collar is an advanced monitoring system designed to improve animal health,
+                    productivity, and security through intelligent sensors, GPS tracking, and real-time data analysis.
+                </p>
+
+                <div class="comp-table-wrapper">
+                    <table class="comp-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>CattleGrow® Collar</th>
+                                <th>Traditional Systems</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Health Tracking</td>
+                                <td>Rumination, Posture, Temp, Activity</td>
+                                <td>Limited or Visual only</td>
+                            </tr>
+                            <tr>
+                                <td>GPS tracking</td>
+                                <td>Real-time + Geofencing</td>
+                                <td>None or Manual</td>
+                            </tr>
+                            <tr>
+                                <td>Early Detection</td>
+                                <td>AI Alerts for Stress/Lame/Heat</td>
+                                <td>Reactive detection</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>
+                    The collar continuously monitors activity, rumination, posture, body temperature, and movement
+                    patterns, enabling early detection of diseases, stress, or locomotion problems such as lameness. Its
+                    advanced algorithms also support accurate heat detection and reproductive management.
+                </p>
+
+                <p>
+                    Unlike many traditional systems, the Smart CattleGrow® Collar includes real-time GPS tracking,
+                    allowing farmers to locate animals, establish geofences, and receive alerts for unusual movements or
+                    potential theft.
+                </p>
+
+                <p>
+                    All data is integrated into a cloud-based platform accessible from mobile or desktop, using
+                    artificial intelligence to generate early alerts, predictive insights, and herd management reports.
+                </p>
+
+                <p class="font-bold">
+                    The result is a powerful tool that enables producers to make data-driven decisions, improve animal
+                    welfare, and optimize farm productivity.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: FEEDING MANAGEMENT -->
+    <section id="feeding" class="odd-section bg-slate-50 text-ag-dark">
+        <div class="section-50-50 odd-section">
+            <div class="section-image">
+                <div class="mockup-container">
+                    <img src="Images/C2.png" alt="Feeding Management Interface">
+                </div>
+            </div>
+            <div class="section-content">
+                <span class="subtitle">Precision Nutrition & Efficient Logisitics</span>
+                <h2>Feeding Management.</h2>
+                <p>
+                    Our Feeding Management system optimizes the entire feeding process to ensure accuracy, efficiency,
+                    and optimal animal nutrition.
+                </p>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-ag-green mb-2">Ration & Diet Formulation</h3>
+                        <p>
+                            Create and manage precise feeding rations by adjusting both dry matter (DM) and as-fed
+                            values, ensuring accurate nutrient delivery. Water can also be incorporated as a separate
+                            ingredient when required for specific diet formulations.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-ag-green mb-2">Bunk Reading & Intake Adjustment</h3>
+                        <p>
+                            The system records bunk readings to estimate feed refusals and automatically adjusts the
+                            next day’s feed deliveries, helping maintain consistent intake while minimizing waste.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-ag-green mb-2">Delivery Planning</h3>
+                        <p>
+                            Plan and schedule multiple feed deliveries per pen per day, improving feed availability,
+                            animal performance, and operational efficiency.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-ag-green mb-2">Mixer Integration for Operators</h3>
+                        <p>
+                            A dedicated operator interface for feed mixers displays target vs. actual ingredient loading
+                            and mixing times, ensuring precise batching, proper mixing, and full traceability during
+                            feed preparation.
+                        </p>
+                    </div>
+                </div>
+
+                <p class="font-bold">
+                    This integrated approach improves feeding precision, reduces waste, and enhances overall herd
+                    productivity.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: ANIMAL HEALTH MANAGEMENT -->
+    <section id="health" class="even-section bg-white text-ag-dark">
+        <div class="section-50-50 even-section">
+            <div class="section-image">
+                <div class="mockup-container">
+                    <img src="Images/C3.png" alt="Animal Health Management Interface">
+                </div>
+            </div>
+            <div class="section-content">
+                <span class="subtitle">Comprehensive Traceability & Veterinary Care</span>
+                <h2>Animal Health Management.</h2>
+                <p>
+                    Our Animal Health Management system provides a comprehensive and traceable approach to veterinary
+                    care and disease control.
+                </p>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Diagnosis-Based Health Protocols</h3>
+                        <p class="text-sm">Link medical protocols directly to specific diagnoses (pneumonia, anemia,
+                            etc.), standardizing care with clear treatment descriptions and instructions.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Individual & Group Treatments</h3>
+                            <p class="text-sm">Automatic dose calculations based on weight or head count, reducing human
+                                error for both solo and group medication.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Flexible Sick Management</h3>
+                            <p class="text-sm">Manage animals in their original pens or hospital pens with real-time
+                                capacity tracking and logistics support.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Complete Health Records & Analytics</h3>
+                        <p class="text-sm">Traceable animal profiles for temperatures and diagnoses, powered by a
+                            centralized dashboard with morbidity and mortality analytics.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Integrated Health Ecosystem</h3>
+                            <p class="text-sm">Connects directly with chute processing and pharmaceutical inventory for
+                                automatic stock and cost updates.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Withdrawal & Data Transfer</h3>
+                            <p class="text-sm">Strict regulatory withdrawal control and secure data exchange for
+                                uninterrupted traceability across the supply chain.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="font-bold pt-4 border-t border-slate-100">
+                    This system improves animal welfare, treatment accuracy, regulatory compliance, and operational
+                    efficiency across modern livestock operations.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: CHUTE & PROCESSING -->
+    <section id="chute" class="odd-section bg-slate-50 text-ag-dark">
+        <div class="section-50-50 odd-section">
+            <div class="section-image">
+                <div class="mockup-container">
+                    <img src="Images/C4.png" alt="Chute & Processing Interface">
+                </div>
+            </div>
+            <div class="section-content">
+                <span class="subtitle">Lightning-Fast Processing at the Chute</span>
+                <h2>High-Efficiency <br>Chute Hub.</h2>
+                <p>
+                    Chute & Processing is the critical execution point, connecting physical cattle handling with the
+                    platform’s health, inventory, and financial management.
+                </p>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Hardware-Agnostic Data Capture</h3>
+                        <p class="text-sm">Seamless integration via Bluetooth with industry-standard scale heads
+                            (Digi-Star, Weigh-Tronix, etc.) and RFID readers (Gallagher, Tru-Test, etc.) for automatic,
+                            error-free weight and EID capture.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Maximum Speed Workflows</h3>
+                            <p class="text-sm">Receive cattle, assign EIDs, and apply protocols in one flow. "Quick
+                                Start"
+                                mode allows instant profile access and treatment logging on the fly.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Automated Sorting</h3>
+                            <p class="text-sm">Draft animals automatically into pens based on weight ranges or
+                                headcount.
+                                Manual overrides allow sorting by sex or body condition.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Continuous-Flow UI</h3>
+                            <p class="text-sm">Designed for high-throughput; the system automatically advances to the
+                                next
+                                animal after capture, enabling uninterrupted processing sessions.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-ag-green mb-1">Full Ecosystem Integration</h3>
+                            <p class="text-sm">Treatments update health records, deduction from pharma inventory occurs
+                                auto-calculated by weight, and costs hit the financial ledger instantly.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="font-bold pt-4 border-t border-slate-200">
+                    This seamless integration transforms the chute into a high-speed data capture hub, ensuring every
+                    action instantly updates operational, health, and financial intelligence.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: DYNAMIC INVENTORY & RATIONS -->
+    <section id="inventory" class="even-section bg-white text-ag-dark">
+        <div class="section-50-50 even-section">
+            <div class="section-image">
+                <div class="mockup-container">
+                    <img src="Images/C5.png" alt="Dynamic Inventory Interface">
+                </div>
+            </div>
+            <div class="section-content">
+                <span class="subtitle">Dynamic Inventory Pricing & Ration Integration</span>
+                <h2>Inventory <br>& Ration Pricing.</h2>
+                <p>
+                    Cattler’s Inventory system connects feed ingredients, veterinary supplies, and financial operations
+                    into a single dynamic platform where every movement impacts costs in real time.
+                </p>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Dynamic Ingredient Pricing</h3>
+                        <p class="text-sm">Configure NEM, NEG, and DM parameters. Weighted average costs automatically
+                            update when new stock arrives, ensuring precise valuation of combined inventory.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-lg font-bold text-ag-green mb-1">Real-Time Ration Impact</h3>
+                        <p class="text-sm">Purchasing price changes instantly propagate through all active rations,
+                            providing managers with immediate visibility into current feeding economics.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Premixes & Feed Manufacturing</h3>
+                        <p class="text-sm">Digitally mirror on-site feed mills. The system deducts raw materials,
+                            applies
+                            mixing shrink, and creates new premix balances with full traceability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: BILLING & FINANCIAL INTELLIGENCE -->
+    <section id="business" class="odd-section bg-slate-50 text-ag-dark">
+        <div class="section-50-50 odd-section">
+            <div class="section-image">
+                <div class="mockup-container">
+                    <img src="Images/business_inventory.png" alt="Business Intelligence Mockup">
+                </div>
+            </div>
+            <div class="section-content">
+                <span class="subtitle">Total Financial Control & Analytics</span>
+                <h2>Billing & Financial <br>Intelligence.</h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Automated Billing & Grain Banks</h3>
+                        <p class="text-sm">Generate invoices based on exact consumption, yardage, and health treatments.
+                            Track bulk grain deposits and convert them into credits for client billing.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Real-Time Economics & Closeouts</h3>
+                        <p class="text-sm">Calculate precise FCR, cost of gain, and daily cost per head. Every
+                            transaction flows into real-time closeout reports for a complete operation picture.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Enterprise Financial Sync</h3>
+                        <p class="text-sm">Direct QuickBooks integration for all invoices, with active support for ERP
+                            systems like SAP and Finnegans to maintain professional financial ledgers.</p>
+                    </div>
+                </div>
+
+                <p class="font-bold pt-4 border-t border-slate-200">
+                    Cattler connects physical handling with financial management, transforming day-to-day operations
+                    into high-level business intelligence.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Form Section -->
+    <section id="contacto" class="py-24 px-6 md:px-12 bg-slate-100 text-ag-dark">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
+            <div class="md:w-1/2 space-y-8">
+                <h2 class="text-4xl md:text-5xl font-bold leading-tight">
+                    Ready to transform <br> your productivity?
+                </h2>
+                <p class="text-lg text-slate-600 font-light max-w-md">
+                    Let us understand your ranch's potential. An expert will analyze your case and present a
+                    personalized plan with no commitment.
+                </p>
+                <div class="flex items-center space-x-4">
+                    <div class="flex -space-x-3">
+                        <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-white"
+                            alt="Rancher">
+                        <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-white"
+                            alt="Rancher">
+                        <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-white"
+                            alt="Rancher">
+                    </div>
+                    <p class="text-sm font-medium text-slate-500">+500 ranches are already innovating with us.</p>
+                </div>
+            </div>
+
+            <div class="md:w-1/2 w-full">
+                <div
+                    class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-ag-green"></div>
+                    <form id="leadForm" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Full
+                                    Name</label>
+                                <input type="text" name="name" required
+                                    class="w-full bg-slate-50 border-0 rounded-lg p-4 focus:ring-2 focus:ring-ag-green outline-none transition-all"
+                                    placeholder="e.g. John Smith">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Corporate
+                                    Email</label>
+                                <input type="email" name="email" required
+                                    class="w-full bg-slate-50 border-0 rounded-lg p-4 focus:ring-2 focus:ring-ag-green outline-none transition-all"
+                                    placeholder="john@your-ranch.com">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Ranch
+                                Location</label>
+                            <input type="text" name="location" required
+                                class="w-full bg-slate-50 border-0 rounded-lg p-4 focus:ring-2 focus:ring-ag-green outline-none transition-all"
+                                placeholder="City, State, Country">
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Herd
+                                    Size</label>
+                                <select name="size"
+                                    class="w-full bg-slate-50 border-0 rounded-lg p-4 focus:ring-2 focus:ring-ag-green outline-none appearance-none transition-all cursor-pointer">
+                                    <option value="0-100">Less than 100</option>
+                                    <option value="100-500">100 - 500</option>
+                                    <option value="500-2000">500 - 2,000</option>
+                                    <option value="2000+">More than 2,000</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Primary
+                                    Interest</label>
+                                <select name="interest"
+                                    class="w-full bg-slate-50 border-0 rounded-lg p-4 focus:ring-2 focus:ring-ag-green outline-none appearance-none transition-all cursor-pointer">
+                                    <option value="fencing">Virtual Fencing</option>
+                                    <option value="health">Health Monitoring</option>
+                                    <option value="optimization">Profitability / Data</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-ag-dark text-white font-bold py-5 rounded-lg hover:bg-ag-green transition-all duration-300 transform active:scale-[0.98] shadow-lg">
+                            Get Free Diagnosis
+                        </button>
+                    </form>
+                    <div id="formFeedback"
+                        class="hidden mt-6 text-center text-ag-green font-medium p-4 bg-ag-green/5 rounded-lg border border-ag-green/10">
+                        Thank you! An expert will contact you within the next 24 hours.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-3xl brand-font uppercase">
+                CATTLEGROW
+            </div>
+            <div class="text-slate-500 text-sm">
+                © 2026 CattleGrow ERP. All rights reserved.
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="text-slate-400 hover:text-white transition-colors">LinkedIn</a>
+                <a href="#" class="text-slate-400 hover:text-white transition-colors">Twitter</a>
+                <a href="#" class="text-slate-400 hover:text-white transition-colors">Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
