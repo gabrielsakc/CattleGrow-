@@ -28,18 +28,6 @@ body {
 }
 
 /* Navbar adjustments */
-#navbar.scrolled {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 12px 0;
-}
-
-#navbar.scrolled .brand-font,
-#navbar.scrolled .hover\:text-ag-green {
-    color: var(--ag-dark);
-}
 
 /* Animations */
 @keyframes fadeInUp {

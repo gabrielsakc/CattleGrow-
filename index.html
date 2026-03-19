@@ -49,13 +49,21 @@
                 <a href="https://cattle-dashboard-app.vercel.app" target="_blank" rel="noopener noreferrer"
                     class="hover:text-ag-green transition-colors border-b-2 border-ag-green pb-1">App Login</a>
             </div>
-            <div class="md:hidden text-white">
-                <!-- Mobile Menu Button Placeholder -->
+            <button id="mobileMenuBtn" class="md:hidden text-white" aria-label="Toggle menu">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
-            </div>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 pt-2 space-y-4 text-sm font-medium uppercase tracking-widest text-white">
+            <a href="#hardware" class="block hover:text-ag-green transition-colors">Technology</a>
+            <a href="#feeding" class="block hover:text-ag-green transition-colors">Feeding</a>
+            <a href="#health" class="block hover:text-ag-green transition-colors">Health</a>
+            <a href="#business" class="block hover:text-ag-green transition-colors">Analytics</a>
+            <a href="https://cattle-dashboard-app.vercel.app" target="_blank" rel="noopener noreferrer"
+                class="block hover:text-ag-green transition-colors border-b-2 border-ag-green pb-1 w-fit">App Login</a>
         </div>
     </nav>
 
@@ -248,7 +256,7 @@
                 </div>
             </div>
             <div class="section-content">
-                <span class="subtitle">Precision Nutrition & Efficient Logisitics</span>
+                <span class="subtitle">Precision Nutrition & Efficient Logistics</span>
                 <h2>Feeding Management.</h2>
                 <p>
                     Our Feeding Management system optimizes the entire feeding process to ensure accuracy, efficiency,
@@ -437,7 +445,7 @@
                 <span class="subtitle">Dynamic Inventory Pricing & Ration Integration</span>
                 <h2>Inventory <br>& Ration Pricing.</h2>
                 <p>
-                    Cattler’s Inventory system connects feed ingredients, veterinary supplies, and financial operations
+                    CattleGrow’s Inventory system connects feed ingredients, veterinary supplies, and financial operations
                     into a single dynamic platform where every movement impacts costs in real time.
                 </p>
 
@@ -448,7 +456,7 @@
                             update when new stock arrives, ensuring precise valuation of combined inventory.</p>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-lg font-bold text-ag-green mb-1">Real-Time Ration Impact</h3>
+                        <h3 class="text-lg font-bold text-ag-green mb-1">Real-Time Ration Impact</h3>
                         <p class="text-sm">Purchasing price changes instantly propagate through all active rations,
                             providing managers with immediate visibility into current feeding economics.</p>
                     </div>
@@ -494,7 +502,7 @@
                 </div>
 
                 <p class="font-bold pt-4 border-t border-slate-200">
-                    Cattler connects physical handling with financial management, transforming day-to-day operations
+                    CattleGrow connects physical handling with financial management, transforming day-to-day operations
                     into high-level business intelligence.
                 </p>
             </div>
