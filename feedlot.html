@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CattleGrow – Feedlot OS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Inter',sans-serif;box-sizing:border-box}
+  body{background:#f1f5f9;color:#1e293b}
+  ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:#f1f5f9}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+  .sidebar{width:220px;min-height:100vh;background:#0f172a;position:fixed;top:0;left:0;z-index:40}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:#94a3b8;border-radius:8px;margin:2px 8px;font-size:13px;font-weight:500;transition:all .15s}
+  .nav-item:hover{background:#1e293b;color:#fff}
+  .nav-item.active{background:#1d4ed8;color:#fff}
+  .nav-icon{width:18px;height:18px;flex-shrink:0}
+  .main{margin-left:220px;min-height:100vh;padding:24px}
+  .panel{display:none}.panel.active{display:block}
+  .card{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:20px}
+  .kpi{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:18px;display:flex;flex-direction:column;gap:4px}
+  .kpi-val{font-size:28px;font-weight:700;color:#0f172a}
+  .kpi-lbl{font-size:12px;color:#64748b;font-weight:500}
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge-green{background:#dcfce7;color:#166534}
+  .badge-red{background:#fee2e2;color:#991b1b}
+  .badge-yellow{background:#fef9c3;color:#854d0e}
+  .badge-blue{background:#dbeafe;color:#1e40af}
+  .badge-orange{background:#ffedd5;color:#9a3412}
+  .badge-gray{background:#f1f5f9;color:#475569}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+  .btn-primary{background:#1d4ed8;color:#fff}.btn-primary:hover{background:#1e40af}
+  .btn-orange{background:#ea580c;color:#fff}.btn-orange:hover{background:#c2410c}
+  .btn-ghost{background:#f1f5f9;color:#374151;border:1px solid #e2e8f0}.btn-ghost:hover{background:#e2e8f0}
+  .btn-danger{background:#dc2626;color:#fff}.btn-danger:hover{background:#b91c1c}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  table{width:100%;border-collapse:collapse}
+  thead tr{background:#f8fafc}
+  th{text-align:left;padding:10px 14px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #e2e8f0}
+  td{padding:10px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f1f5f9}
+  tr:hover td{background:#f8fafc}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal-box{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative}
+  input,select,textarea{width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;color:#0f172a;background:#fff;transition:border .15s}
+  input:focus,select:focus,textarea:focus{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,.1)}
+  label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px}
+  .form-grid{display:grid;gap:14px}
+  .form-grid.cols-2{grid-template-columns:1fr 1fr}
+  .toast-container{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:8px}
+  .toast{padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;animation:slideIn .2s ease;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .toast-success{background:#16a34a}.toast-error{background:#dc2626}.toast-info{background:#1d4ed8}
+  @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+  .progress-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px;transition:width .3s}
+  .tab-btn{padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:#64748b;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s}
+  .tab-btn.active{color:#1d4ed8;border-bottom-color:#1d4ed8;font-weight:600}
+  .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;background:#f1f5f9;color:#374151}
+  .empty-state{text-align:center;padding:48px 24px;color:#94a3b8}
+  .empty-icon{font-size:40px;margin-bottom:12px}
+  .topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:14px 24px;margin:-24px -24px 24px -24px;display:flex;align-items:center;justify-content:space-between}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot-green{background:#22c55e}.dot-red{background:#ef4444}
+  @media(max-width:768px){.sidebar{width:60px}.sidebar .nav-label{display:none}.sidebar .logo-text{display:none}.main{margin-left:60px}.form-grid.cols-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar flex flex-col py-4">
+  <div class="px-4 mb-6">
+    <div class="flex items-center gap-2">
+      <div style="width:32px;height:32px;background:linear-gradient(135deg,#1d4ed8,#ea580c);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">🐂</div>
+      <div class="logo-text">
+        <div style="font-size:14px;font-weight:700;color:#fff">CattleGrow</div>
+        <div style="font-size:10px;color:#64748b">Feedlot OS</div>
+      </div>
+    </div>
+  </div>
+  <div id="navItems" class="flex-1 flex flex-col gap-0.5">
+    <div class="nav-item active" data-module="overview"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg><span class="nav-label">Overview</span></div>
+    <div class="nav-item" data-module="feeding"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 6v6l4 2"/></svg><span class="nav-label">Feeding</span></div>
+    <div class="nav-item" data-module="mixer"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M1 3h15v13H1z"/><path stroke-width="2" d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke-width="2"/></svg><span class="nav-label">Mixer / Trucks</span></div>
+    <div class="nav-item" data-module="monitoring"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline stroke-width="2" points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="nav-label">Live Monitor</span></div>
+    <div class="nav-item" data-module="livestock"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke-width="2"/><path stroke-width="2" d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="nav-label">Livestock</span></div>
+    <div class="nav-item" data-module="health"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="nav-label">Health</span></div>
+    <div class="nav-item" data-module="inventory"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path stroke-width="2" d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><span class="nav-label">Inventory</span></div>
+    <div class="nav-item" data-module="financials"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23" stroke-width="2"/><path stroke-width="2" d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span class="nav-label">Financials</span></div>
+    <div class="nav-item" data-module="hardware"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-width="2"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="3" stroke-linecap="round"/></svg><span class="nav-label">Hardware</span></div>
+    <div class="nav-item" data-module="fieldops"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span class="nav-label">Field Ops</span></div>
+    <div class="nav-item" data-module="team"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/><circle cx="9" cy="7" r="4" stroke-width="2"/></svg><span class="nav-label">Team</span></div>
+  </div>
+  <div class="px-4 mt-4">
+    <a href="index.html" style="text-decoration:none"><div class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/></svg><span class="nav-label" style="font-size:12px">Main Site</span></div></a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<div class="topbar">
+  <div>
+    <div style="font-size:18px;font-weight:700;color:#0f172a" id="moduleTitle">Overview</div>
+    <div style="font-size:13px;color:#64748b" id="moduleSub">Feedlot operations at a glance</div>
+  </div>
+  <div class="flex items-center gap-3">
+    <span id="connStatus" class="badge badge-gray">Connecting…</span>
+    <button class="btn btn-primary btn-sm" onclick="triggerTopAdd()">+ New</button>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="panel active" id="panel-overview">
+  <div class="grid gap-4 mb-6" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi"><div class="kpi-lbl">Active Lots</div><div class="kpi-val" id="kpi-lots">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Head on Feed</div><div class="kpi-val" id="kpi-head">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Active Pens</div><div class="kpi-val" id="kpi-pens">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Avg Days on Feed</div><div class="kpi-val" id="kpi-dof">—</div></div>
+  </div>
+  <div class="grid gap-6" style="grid-template-columns:2fr 1fr">
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-semibold text-sm">Active Lots</div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('lot')">+ New Lot</button>
+      </div>
+      <div id="lotsTable"><div class="empty-state"><div class="empty-icon">📋</div>Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-semibold text-sm">Pens / Corrales</div>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('pen')">+ Pen</button>
+      </div>
+      <div id="pensTable"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDING -->
+<div class="panel" id="panel-feeding">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="rations">Rations</button>
+    <button class="tab-btn" data-tab="lot-rations">Lot Assignments</button>
+    <button class="tab-btn" data-tab="feed-events">Feed Log</button>
+  </div>
+  <div id="tab-rations">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Feed Ration Protocols</div><button class="btn btn-primary btn-sm" onclick="openModal('ration')">+ New Ration</button></div>
+    <div id="rationsTable"></div>
+  </div>
+  <div id="tab-lot-rations" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Ration → Lot Assignments</div><button class="btn btn-primary btn-sm" onclick="openModal('lot-ration')">+ Assign Ration</button></div>
+    <div id="lotRationsTable"></div>
+  </div>
+  <div id="tab-feed-events" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Daily Feeding Log</div><button class="btn btn-primary btn-sm" onclick="openModal('feeding-event')">+ Log Event</button></div>
+    <div id="feedEventsTable"></div>
+  </div>
+</div>
+
+<!-- MIXER -->
+<div class="panel" id="panel-mixer">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="trucks">Trucks</button>
+    <button class="tab-btn" data-tab="load-orders">Load Orders</button>
+  </div>
+  <div id="tab-trucks">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Feed Trucks</div><button class="btn btn-primary btn-sm" onclick="openModal('truck')">+ Add Truck</button></div>
+    <div id="trucksTable"></div>
+  </div>
+  <div id="tab-load-orders" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Load Orders</div><button class="btn btn-primary btn-sm" onclick="openModal('load-order')">+ New Order</button></div>
+    <div id="loadOrdersTable"></div>
+  </div>
+</div>
+
+<!-- MONITORING -->
+<div class="panel" id="panel-monitoring">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="bunk">Bunk Scores</button>
+    <button class="tab-btn" data-tab="consumption">Consumption Log</button>
+  </div>
+  <div id="tab-bunk">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Bunk Score Tracking</div><button class="btn btn-primary btn-sm" onclick="openModal('bunk-score')">+ Record Score</button></div>
+    <div id="bunkTable"></div>
+  </div>
+  <div id="tab-consumption" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Feed Consumption vs Plan</div></div>
+    <div id="consumptionTable"></div>
+  </div>
+</div>
+
+<!-- LIVESTOCK -->
+<div class="panel" id="panel-livestock">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="animals-list">Animals</button>
+    <button class="tab-btn" data-tab="weight-records">Weight Records</button>
+  </div>
+  <div id="tab-animals-list">
+    <div class="flex justify-between items-center mb-4">
+      <div class="font-semibold text-sm">Feedlot Animals</div>
+      <div class="flex gap-2">
+        <input type="text" id="animalSearch" placeholder="Search ID, breed…" style="width:200px" oninput="filterAnimals()">
+        <button class="btn btn-primary btn-sm" onclick="openModal('animal')">+ Register</button>
+      </div>
+    </div>
+    <div id="animalsTable"></div>
+  </div>
+  <div id="tab-weight-records" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Weight Records</div><button class="btn btn-primary btn-sm" onclick="openModal('weight')">+ Record Weight</button></div>
+    <div id="weightTable"></div>
+  </div>
+</div>
+
+<!-- HEALTH -->
+<div class="panel" id="panel-health">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="treatments">Treatments</button>
+    <button class="tab-btn" data-tab="protocols">Protocols</button>
+  </div>
+  <div id="tab-treatments">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Treatment Records</div><button class="btn btn-primary btn-sm" onclick="openModal('treatment')">+ Record Treatment</button></div>
+    <div id="treatmentsTable"></div>
+  </div>
+  <div id="tab-protocols" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Treatment Protocols</div><button class="btn btn-primary btn-sm" onclick="openModal('protocol')">+ New Protocol</button></div>
+    <div id="protocolsTable"></div>
+  </div>
+</div>
+
+<!-- INVENTORY -->
+<div class="panel" id="panel-inventory">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="feed-inv">Feed Inventory</button>
+    <button class="tab-btn" data-tab="med-inv">Medications</button>
+  </div>
+  <div id="tab-feed-inv">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Feed Stock</div><button class="btn btn-primary btn-sm" onclick="openModal('feed-inv')">+ Add Item</button></div>
+    <div id="feedInvTable"></div>
+  </div>
+  <div id="tab-med-inv" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Medication Stock</div><button class="btn btn-primary btn-sm" onclick="openModal('med-inv')">+ Add Drug</button></div>
+    <div id="medInvTable"></div>
+  </div>
+</div>
+
+<!-- FINANCIALS -->
+<div class="panel" id="panel-financials">
+  <div class="flex gap-0 mb-6 border-b border-slate-200">
+    <button class="tab-btn active" data-tab="clients">Clients</button>
+    <button class="tab-btn" data-tab="invoices">Invoices / AR</button>
+  </div>
+  <div id="tab-clients">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Client Accounts</div><button class="btn btn-primary btn-sm" onclick="openModal('client')">+ New Client</button></div>
+    <div id="clientsTable"></div>
+  </div>
+  <div id="tab-invoices" style="display:none">
+    <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Invoices</div><button class="btn btn-primary btn-sm" onclick="openModal('invoice')">+ New Invoice</button></div>
+    <div id="invoicesTable"></div>
+  </div>
+</div>
+
+<!-- HARDWARE -->
+<div class="panel" id="panel-hardware">
+  <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Connected Devices</div><button class="btn btn-primary btn-sm" onclick="openModal('device')">+ Register Device</button></div>
+  <div id="devicesGrid" class="grid gap-4" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))"></div>
+</div>
+
+<!-- FIELD OPS -->
+<div class="panel" id="panel-fieldops">
+  <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Field Tasks</div><button class="btn btn-primary btn-sm" onclick="openModal('task')">+ New Task</button></div>
+  <div id="tasksTable"></div>
+</div>
+
+<!-- TEAM -->
+<div class="panel" id="panel-team">
+  <div class="flex justify-between items-center mb-4"><div class="font-semibold text-sm">Team Members</div><button class="btn btn-primary btn-sm" onclick="openModal('team-user')">+ Add Member</button></div>
+  <div id="teamGrid" class="grid gap-4" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))"></div>
+</div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-bold text-base" id="modalTitle">Form</h3>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:#64748b;font-size:20px;line-height:1">✕</button>
+    </div>
+    <form id="modalForm" onsubmit="submitModal(event)">
+      <div id="modalFields"><div class="text-center py-4 text-slate-400">Loading…</div></div>
+      <div class="flex gap-3 justify-end mt-6">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── SUPABASE ──────────────────────────────────────────────────────────
+const SB_URL = 'https://qgrwbwgztrdqkakpwsaw.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncndid2d6dHJkcWtha3B3c2F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTI5MDMsImV4cCI6MjA4OTQyODkwM30.NrigTqLCBPThBgj0e3d2H-bcGd7dE5Vfmc_9tymfMDU';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+sb.from('fl_lots').select('id').limit(1).then(({error})=>{
+  const el = document.getElementById('connStatus');
+  if(error){ el.textContent='Offline'; el.className='badge badge-red'; }
+  else { el.textContent='Live'; el.className='badge badge-green'; }
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────
+function toast(msg, type='success'){
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>t.remove(), 3200);
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────
+const S = {
+  lots:[], pens:[], animals:[], rations:[], lotRations:[],
+  feedEvents:[], bunkScores:[], treatments:[], protocols:[],
+  feedInv:[], medInv:[], trucks:[], loadOrders:[],
+  clients:[], invoices:[], devices:[], team:[], tasks:[], weightRecords:[]
+};
+let currentModule = 'overview';
+let currentModal = null;
+let editId = null;
+
+// ── NAVIGATION ────────────────────────────────────────────────────────
+const moduleMeta = {
+  overview:   {title:'Overview',          sub:'Feedlot operations at a glance',   add:()=>openModal('lot')},
+  feeding:    {title:'Feeding System',    sub:'Rations, protocols and feed log',   add:()=>openModal('ration')},
+  mixer:      {title:'Mixer & Trucks',    sub:'Load orders and truck routes',      add:()=>openModal('truck')},
+  monitoring: {title:'Live Monitoring',   sub:'Bunk scores and consumption',       add:()=>openModal('bunk-score')},
+  livestock:  {title:'Livestock',         sub:'Animals and weight records',        add:()=>openModal('animal')},
+  health:     {title:'Animal Health',     sub:'Treatments and protocols',          add:()=>openModal('treatment')},
+  inventory:  {title:'Inventory',         sub:'Feed and medication stock',         add:()=>openModal('feed-inv')},
+  financials: {title:'Financials',        sub:'Clients, invoices and AR',          add:()=>openModal('client')},
+  hardware:   {title:'Hardware',          sub:'Devices and equipment',             add:()=>openModal('device')},
+  fieldops:   {title:'Field Operations',  sub:'Tasks and mobile workforce',        add:()=>openModal('task')},
+  team:       {title:'Team',              sub:'Users, roles and access',           add:()=>openModal('team-user')},
+};
+
+document.querySelectorAll('.nav-item[data-module]').forEach(el=>{
+  el.addEventListener('click',()=>{
+    const mod = el.dataset.module;
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(`panel-${mod}`).classList.add('active');
+    const m = moduleMeta[mod];
+    document.getElementById('moduleTitle').textContent = m.title;
+    document.getElementById('moduleSub').textContent = m.sub;
+    currentModule = mod;
+    loadModule(mod);
+  });
+});
+
+function triggerTopAdd(){ moduleMeta[currentModule]?.add(); }
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const panel = btn.closest('.panel');
+    panel.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    panel.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
+    document.getElementById(`tab-${tab}`).style.display='block';
+    loadTab(tab);
+  });
+});
+
+function loadModule(mod){
+  const map = {overview:loadOverview,feeding:loadRations,mixer:loadTrucks,monitoring:loadBunkScores,livestock:loadAnimals,health:loadTreatments,inventory:loadFeedInv,financials:loadClients,hardware:loadDevices,fieldops:loadTasks,team:loadTeam};
+  map[mod]?.();
+}
+function loadTab(tab){
+  const map = {'rations':loadRations,'lot-rations':loadLotRations,'feed-events':loadFeedEvents,'trucks':loadTrucks,'load-orders':loadLoadOrders,'bunk':loadBunkScores,'consumption':loadConsumption,'animals-list':loadAnimals,'weight-records':loadWeightRecords,'treatments':loadTreatments,'protocols':loadProtocols,'feed-inv':loadFeedInv,'med-inv':loadMedInv,'clients':loadClients,'invoices':loadInvoices};
+  map[tab]?.();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+const today = ()=>new Date().toISOString().split('T')[0];
+const fmtDate = d=> d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const fmtNum = n=> n!=null ? Number(n).toLocaleString() : '—';
+const fmtMoney = n=> n!=null ? '$'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+function statusBadge(s){
+  const m={active:'green',closed:'gray',pending:'yellow',delivered:'green',in_treatment:'yellow',recovered:'green',dead:'red',on_feed:'blue',sold:'gray',available:'green',offline:'red',online:'green',paid:'green',overdue:'red',normal:'gray',high:'orange',critical:'red',low:'blue',in_progress:'blue',completed:'green'};
+  return `<span class="badge badge-${m[s]||'gray'}">${s||'—'}</span>`;
+}
+const emptyState = (msg='No records yet')=>`<div class="empty-state"><div class="empty-icon">📭</div>${msg}</div>`;
+const tw = html=>`<div style="overflow-x:auto"><table>${html}</table></div>`;
+const actBtns = (type,id)=>`<div class="flex gap-1 flex-nowrap"><button class="btn btn-ghost btn-sm" onclick="openModal('${type}','${id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteRecord('${type}','${id}')">Del</button></div>`;
+
+// ── OVERVIEW ──────────────────────────────────────────────────────────
+async function loadOverview(){
+  const [{data:lots},{data:pens}] = await Promise.all([
+    sb.from('fl_lots').select('*,fl_pens(name),fl_clients(name)').order('created_at',{ascending:false}),
+    sb.from('fl_pens').select('*').order('name')
+  ]);
+  S.lots=lots||[]; S.pens=pens||[];
+  const active=S.lots.filter(l=>l.status==='active');
+  document.getElementById('kpi-lots').textContent=active.length;
+  document.getElementById('kpi-head').textContent=fmtNum(active.reduce((a,l)=>a+(l.current_head||0),0));
+  document.getElementById('kpi-pens').textContent=S.pens.filter(p=>p.status==='active').length;
+  const avgDof=active.length?Math.round(active.reduce((a,l)=>{return a+Math.floor((Date.now()-new Date(l.entry_date))/86400000);},0)/active.length):0;
+  document.getElementById('kpi-dof').textContent=avgDof+'d';
+
+  document.getElementById('lotsTable').innerHTML=S.lots.length?tw(`
+    <thead><tr><th>Lot #</th><th>Pen</th><th>Client</th><th>Head</th><th>Entry</th><th>Target Wt</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.lots.map(l=>`<tr>
+      <td><strong>${l.lot_number}</strong></td>
+      <td>${l.fl_pens?.name||'—'}</td><td>${l.fl_clients?.name||'—'}</td>
+      <td>${fmtNum(l.current_head)}</td><td>${fmtDate(l.entry_date)}</td>
+      <td>${l.target_weight?fmtNum(l.target_weight)+' lb':'—'}</td>
+      <td>${statusBadge(l.status)}</td><td>${actBtns('lot',l.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No lots yet — create your first lot');
+
+  document.getElementById('pensTable').innerHTML=S.pens.length?tw(`
+    <thead><tr><th>Pen</th><th>Cap.</th><th>Type</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.pens.map(p=>`<tr>
+      <td><strong>${p.name}</strong></td><td>${fmtNum(p.capacity)}</td>
+      <td><span class="chip">${p.pen_type||'std'}</span></td>
+      <td>${statusBadge(p.status)}</td><td>${actBtns('pen',p.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No pens');
+}
+
+// ── FEEDING ───────────────────────────────────────────────────────────
+async function loadRations(){
+  const {data}=await sb.from('fl_rations').select('*,fl_ration_ingredients(*)').order('day_from');
+  S.rations=data||[];
+  document.getElementById('rationsTable').innerHTML=S.rations.length?tw(`
+    <thead><tr><th>Name</th><th>Phase</th><th>Days</th><th>DM/Head</th><th>$/Head</th><th>Ingredients</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.rations.map(r=>`<tr>
+      <td><strong>${r.name}</strong></td>
+      <td><span class="chip">${r.ration_phase}</span></td>
+      <td>${r.day_from||1}${r.day_to?'–'+r.day_to:'+'}</td>
+      <td>${r.dm_per_head||'—'} lb</td><td>${fmtMoney(r.cost_per_head)}</td>
+      <td>${(r.fl_ration_ingredients||[]).map(i=>`<span class="chip">${i.ingredient} ${i.percentage}%</span>`).join(' ')}</td>
+      <td>${statusBadge(r.status)}</td><td>${actBtns('ration',r.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No rations defined');
+}
+
+async function loadLotRations(){
+  const {data}=await sb.from('fl_lot_rations').select('*,fl_lots(lot_number),fl_rations(name)').order('assigned_at',{ascending:false});
+  S.lotRations=data||[];
+  document.getElementById('lotRationsTable').innerHTML=S.lotRations.length?tw(`
+    <thead><tr><th>Lot</th><th>Ration</th><th>Start Day</th><th>End Day</th><th>Assigned</th><th></th></tr></thead>
+    <tbody>${S.lotRations.map(r=>`<tr>
+      <td><strong>${r.fl_lots?.lot_number||'—'}</strong></td><td>${r.fl_rations?.name||'—'}</td>
+      <td>${r.start_day||1}</td><td>${r.end_day||'Open'}</td>
+      <td>${fmtDate(r.assigned_at)}</td><td>${actBtns('lot-ration',r.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No assignments yet');
+}
+
+async function loadFeedEvents(){
+  const {data}=await sb.from('fl_feeding_events').select('*,fl_lots(lot_number),fl_pens(name),fl_rations(name)').order('feed_date',{ascending:false}).limit(100);
+  S.feedEvents=data||[];
+  document.getElementById('feedEventsTable').innerHTML=S.feedEvents.length?tw(`
+    <thead><tr><th>Date</th><th>Lot</th><th>Pen</th><th>Ration</th><th>Planned lb</th><th>Delivered lb</th><th>Consumed lb</th><th>By</th><th></th></tr></thead>
+    <tbody>${S.feedEvents.map(e=>`<tr>
+      <td>${fmtDate(e.feed_date)}</td><td>${e.fl_lots?.lot_number||'—'}</td><td>${e.fl_pens?.name||'—'}</td>
+      <td>${e.fl_rations?.name||'—'}</td><td>${fmtNum(e.planned_lbs)}</td><td>${fmtNum(e.delivered_lbs)}</td>
+      <td>${fmtNum(e.consumed_lbs)}</td><td>${e.recorded_by||'—'}</td><td>${actBtns('feeding-event',e.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No feed events logged');
+}
+
+// ── MIXER ─────────────────────────────────────────────────────────────
+async function loadTrucks(){
+  const {data}=await sb.from('fl_trucks').select('*').order('name');
+  S.trucks=data||[];
+  document.getElementById('trucksTable').innerHTML=S.trucks.length?tw(`
+    <thead><tr><th>Truck</th><th>Capacity (lb)</th><th>Driver</th><th>GPS</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.trucks.map(t=>`<tr>
+      <td><strong>${t.name}</strong></td><td>${fmtNum(t.capacity_lbs)}</td>
+      <td>${t.driver||'—'}</td><td>${t.gps_id||'—'}</td>
+      <td>${statusBadge(t.status)}</td><td>${actBtns('truck',t.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No trucks registered');
+}
+
+async function loadLoadOrders(){
+  const {data}=await sb.from('fl_load_orders').select('*,fl_trucks(name),fl_rations(name)').order('created_at',{ascending:false}).limit(50);
+  S.loadOrders=data||[];
+  document.getElementById('loadOrdersTable').innerHTML=S.loadOrders.length?tw(`
+    <thead><tr><th>Order #</th><th>Truck</th><th>Ration</th><th>Planned</th><th>Delivered</th><th>Date</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.loadOrders.map(o=>`<tr>
+      <td><strong>${o.order_number}</strong></td><td>${o.fl_trucks?.name||'—'}</td>
+      <td>${o.fl_rations?.name||'—'}</td><td>${fmtNum(o.planned_lbs)} lb</td>
+      <td>${fmtNum(o.delivered_lbs)} lb</td><td>${fmtDate(o.order_date)}</td>
+      <td>${statusBadge(o.status)}</td><td>${actBtns('load-order',o.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No load orders');
+}
+
+// ── MONITORING ────────────────────────────────────────────────────────
+async function loadBunkScores(){
+  const {data}=await sb.from('fl_bunk_scores').select('*,fl_pens(name),fl_lots(lot_number)').order('score_date',{ascending:false}).limit(80);
+  S.bunkScores=data||[];
+  document.getElementById('bunkTable').innerHTML=S.bunkScores.length?tw(`
+    <thead><tr><th>Date</th><th>Pen</th><th>Lot</th><th>Score</th><th>Action</th><th>By</th><th></th></tr></thead>
+    <tbody>${S.bunkScores.map(b=>{
+      const sc=parseFloat(b.score);
+      const cl=sc<=0.5?'badge-green':sc<=1.5?'badge-yellow':'badge-red';
+      return `<tr><td>${fmtDate(b.score_date)}</td><td>${b.fl_pens?.name||'—'}</td><td>${b.fl_lots?.lot_number||'—'}</td>
+        <td><span class="badge ${cl}">${b.score}</span></td>
+        <td>${b.action_taken||'—'}</td><td>${b.recorded_by||'—'}</td><td>${actBtns('bunk-score',b.id)}</td></tr>`;
+    }).join('')}</tbody>`):emptyState('No bunk scores recorded');
+}
+
+async function loadConsumption(){
+  const {data}=await sb.from('fl_feeding_events').select('*,fl_lots(lot_number),fl_pens(name)').order('feed_date',{ascending:false}).limit(50);
+  document.getElementById('consumptionTable').innerHTML=data?.length?tw(`
+    <thead><tr><th>Date</th><th>Lot</th><th>Pen</th><th>Planned</th><th>Delivered</th><th>Variance</th></tr></thead>
+    <tbody>${data.map(e=>{
+      const v=(e.delivered_lbs||0)-(e.planned_lbs||0);
+      const vc=Math.abs(v)<50?'badge-green':v<0?'badge-red':'badge-yellow';
+      return `<tr><td>${fmtDate(e.feed_date)}</td><td>${e.fl_lots?.lot_number||'—'}</td><td>${e.fl_pens?.name||'—'}</td>
+        <td>${fmtNum(e.planned_lbs)} lb</td><td>${fmtNum(e.delivered_lbs)} lb</td>
+        <td><span class="badge ${vc}">${v>=0?'+':''}${fmtNum(v)} lb</span></td></tr>`;
+    }).join('')}</tbody>`):emptyState('No feed events');
+}
+
+// ── LIVESTOCK ─────────────────────────────────────────────────────────
+async function loadAnimals(){
+  const {data}=await sb.from('fl_animals').select('*,fl_lots(lot_number),fl_pens(name)').order('created_at',{ascending:false});
+  S.animals=data||[];
+  renderAnimals(S.animals);
+}
+function renderAnimals(list){
+  document.getElementById('animalsTable').innerHTML=list.length?tw(`
+    <thead><tr><th>Visual ID</th><th>RFID</th><th>Breed</th><th>Gender</th><th>Lot</th><th>Pen</th><th>Entry Wt</th><th>Curr Wt</th><th>Status</th><th></th></tr></thead>
+    <tbody>${list.map(a=>`<tr>
+      <td><strong>${a.visual_id}</strong></td><td>${a.rfid||'—'}</td><td>${a.breed||'—'}</td>
+      <td>${a.gender||'—'}</td><td>${a.fl_lots?.lot_number||'—'}</td><td>${a.fl_pens?.name||'—'}</td>
+      <td>${a.entry_weight?fmtNum(a.entry_weight)+' lb':'—'}</td>
+      <td>${a.current_weight?fmtNum(a.current_weight)+' lb':'—'}</td>
+      <td>${statusBadge(a.status)}</td><td>${actBtns('animal',a.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No animals registered');
+}
+function filterAnimals(){
+  const q=document.getElementById('animalSearch').value.toLowerCase();
+  renderAnimals(S.animals.filter(a=>(a.visual_id+' '+a.rfid+' '+a.breed).toLowerCase().includes(q)));
+}
+
+async function loadWeightRecords(){
+  const {data}=await sb.from('fl_weight_records').select('*,fl_animals(visual_id),fl_lots(lot_number)').order('recorded_at',{ascending:false}).limit(100);
+  S.weightRecords=data||[];
+  document.getElementById('weightTable').innerHTML=S.weightRecords.length?tw(`
+    <thead><tr><th>Animal</th><th>Lot</th><th>Weight (lb)</th><th>Date</th><th>By</th><th></th></tr></thead>
+    <tbody>${S.weightRecords.map(w=>`<tr>
+      <td><strong>${w.fl_animals?.visual_id||'—'}</strong></td><td>${w.fl_lots?.lot_number||'—'}</td>
+      <td>${fmtNum(w.weight)}</td><td>${fmtDate(w.recorded_at)}</td>
+      <td>${w.recorded_by||'—'}</td><td>${actBtns('weight',w.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No weight records');
+}
+
+// ── HEALTH ────────────────────────────────────────────────────────────
+async function loadTreatments(){
+  const {data}=await sb.from('fl_treatments').select('*,fl_animals(visual_id),fl_lots(lot_number),fl_treatment_protocols(name)').order('treatment_date',{ascending:false}).limit(100);
+  S.treatments=data||[];
+  document.getElementById('treatmentsTable').innerHTML=S.treatments.length?tw(`
+    <thead><tr><th>Animal</th><th>Lot</th><th>Diagnosis</th><th>Drug</th><th>Dose</th><th>Date</th><th>Cost</th><th>Outcome</th><th></th></tr></thead>
+    <tbody>${S.treatments.map(t=>`<tr>
+      <td><strong>${t.fl_animals?.visual_id||'—'}</strong></td><td>${t.fl_lots?.lot_number||'—'}</td>
+      <td>${t.diagnosis}</td><td>${t.drug||'—'}</td><td>${t.dose||'—'}</td>
+      <td>${fmtDate(t.treatment_date)}</td><td>${fmtMoney(t.cost)}</td>
+      <td>${statusBadge(t.outcome)}</td><td>${actBtns('treatment',t.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No treatments recorded');
+}
+
+async function loadProtocols(){
+  const {data}=await sb.from('fl_treatment_protocols').select('*').order('name');
+  S.protocols=data||[];
+  document.getElementById('protocolsTable').innerHTML=S.protocols.length?tw(`
+    <thead><tr><th>Protocol</th><th>Diagnosis</th><th>Steps</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.protocols.map(p=>`<tr>
+      <td><strong>${p.name}</strong></td><td>${p.diagnosis||'—'}</td>
+      <td>${(p.steps||[]).length} steps</td><td>${statusBadge(p.status)}</td>
+      <td>${actBtns('protocol',p.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No protocols');
+}
+
+// ── INVENTORY ─────────────────────────────────────────────────────────
+async function loadFeedInv(){
+  const {data}=await sb.from('fl_feed_inventory').select('*').order('ingredient');
+  S.feedInv=data||[];
+  document.getElementById('feedInvTable').innerHTML=S.feedInv.length?tw(`
+    <thead><tr><th>Ingredient</th><th>Category</th><th>Stock (tons)</th><th>Min Stock</th><th>$/Ton</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.feedInv.map(i=>{
+      const low=i.quantity_tons<=i.min_stock_tons;
+      return `<tr><td><strong>${i.ingredient}</strong></td>
+        <td><span class="chip">${i.category}</span></td>
+        <td>${fmtNum(i.quantity_tons)}</td><td>${fmtNum(i.min_stock_tons)}</td>
+        <td>${fmtMoney(i.cost_per_ton)}</td>
+        <td>${low?'<span class="badge badge-red">LOW</span>':'<span class="badge badge-green">OK</span>'}</td>
+        <td>${actBtns('feed-inv',i.id)}</td></tr>`;
+    }).join('')}</tbody>`):emptyState('No feed items');
+}
+
+async function loadMedInv(){
+  const {data}=await sb.from('fl_med_inventory').select('*').order('drug_name');
+  S.medInv=data||[];
+  document.getElementById('medInvTable').innerHTML=S.medInv.length?tw(`
+    <thead><tr><th>Drug</th><th>Unit</th><th>Stock</th><th>Min</th><th>$/Unit</th><th>WD Days</th><th>Expiry</th><th></th></tr></thead>
+    <tbody>${S.medInv.map(m=>{
+      const low=m.quantity<=m.min_stock;
+      return `<tr><td><strong>${m.drug_name}</strong></td><td>${m.unit}</td>
+        <td>${low?`<span class="badge badge-red">${m.quantity}</span>`:m.quantity}</td>
+        <td>${m.min_stock}</td><td>${fmtMoney(m.cost_per_unit)}</td>
+        <td>${m.withdrawal_days}</td><td>${fmtDate(m.expiry_date)}</td>
+        <td>${actBtns('med-inv',m.id)}</td></tr>`;
+    }).join('')}</tbody>`):emptyState('No medications');
+}
+
+// ── FINANCIALS ────────────────────────────────────────────────────────
+async function loadClients(){
+  const {data}=await sb.from('fl_clients').select('*').order('name');
+  S.clients=data||[];
+  document.getElementById('clientsTable').innerHTML=S.clients.length?tw(`
+    <thead><tr><th>Name</th><th>Contact</th><th>Email</th><th>Phone</th><th>Tax ID</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.clients.map(c=>`<tr>
+      <td><strong>${c.name}</strong></td><td>${c.contact_person||'—'}</td>
+      <td>${c.email||'—'}</td><td>${c.phone||'—'}</td>
+      <td>${c.tax_id||'—'}</td><td>${statusBadge(c.status)}</td>
+      <td>${actBtns('client',c.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No clients');
+}
+
+async function loadInvoices(){
+  const {data}=await sb.from('fl_invoices').select('*,fl_clients(name),fl_lots(lot_number)').order('created_at',{ascending:false});
+  S.invoices=data||[];
+  document.getElementById('invoicesTable').innerHTML=S.invoices.length?tw(`
+    <thead><tr><th>Invoice #</th><th>Client</th><th>Lot</th><th>Date</th><th>Due</th><th>Total</th><th>Paid</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.invoices.map(i=>`<tr>
+      <td><strong>${i.invoice_number}</strong></td><td>${i.fl_clients?.name||'—'}</td>
+      <td>${i.fl_lots?.lot_number||'—'}</td><td>${fmtDate(i.issue_date)}</td>
+      <td>${fmtDate(i.due_date)}</td><td>${fmtMoney(i.total)}</td>
+      <td>${fmtMoney(i.paid_amount)}</td><td>${statusBadge(i.status)}</td>
+      <td>${actBtns('invoice',i.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No invoices');
+}
+
+// ── HARDWARE ──────────────────────────────────────────────────────────
+async function loadDevices(){
+  const {data}=await sb.from('fl_devices').select('*').order('name');
+  S.devices=data||[];
+  document.getElementById('devicesGrid').innerHTML=S.devices.length?S.devices.map(d=>`
+    <div class="card">
+      <div class="flex items-start justify-between mb-3">
+        <div><div class="font-semibold text-sm">${d.name}</div><div class="text-xs text-slate-500">${d.device_type.replace(/_/g,' ')}</div></div>
+        <span class="dot dot-${d.status==='online'?'green':'red'}" title="${d.status}"></span>
+      </div>
+      ${d.battery_pct!=null?`<div class="mb-2"><div class="text-xs text-slate-500 mb-1">Battery ${d.battery_pct}%</div><div class="progress-bar"><div class="progress-fill" style="width:${d.battery_pct}%;background:${d.battery_pct<20?'#ef4444':'#22c55e'}"></div></div></div>`:''}
+      <div class="text-xs text-slate-500 mb-3">${d.location||'—'} · SN: ${d.serial_number||'—'}</div>
+      <div class="flex gap-2">${actBtns('device',d.id)}</div>
+    </div>`).join(''):emptyState('No devices registered');
+}
+
+// ── FIELD OPS ─────────────────────────────────────────────────────────
+async function loadTasks(){
+  const {data}=await sb.from('fl_field_tasks').select('*,fl_team_users(full_name),fl_pens(name),fl_lots(lot_number)').order('created_at',{ascending:false});
+  S.tasks=data||[];
+  document.getElementById('tasksTable').innerHTML=S.tasks.length?tw(`
+    <thead><tr><th>Task</th><th>Assigned To</th><th>Pen</th><th>Priority</th><th>Due</th><th>Status</th><th></th></tr></thead>
+    <tbody>${S.tasks.map(t=>`<tr>
+      <td><div class="font-medium">${t.title}</div><div class="text-xs text-slate-400">${t.description||''}</div></td>
+      <td>${t.fl_team_users?.full_name||'Unassigned'}</td>
+      <td>${t.fl_pens?.name||'—'}</td>
+      <td>${statusBadge(t.priority)}</td><td>${fmtDate(t.due_date)}</td>
+      <td>${statusBadge(t.status)}</td><td>${actBtns('task',t.id)}</td>
+    </tr>`).join('')}</tbody>`):emptyState('No tasks');
+}
+
+// ── TEAM ──────────────────────────────────────────────────────────────
+async function loadTeam(){
+  const {data}=await sb.from('fl_team_users').select('*').order('full_name');
+  S.team=data||[];
+  document.getElementById('teamGrid').innerHTML=S.team.length?S.team.map(u=>`
+    <div class="card flex flex-col gap-3">
+      <div class="flex items-center gap-3">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#ea580c);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px">${u.avatar_initials||u.full_name.slice(0,2).toUpperCase()}</div>
+        <div><div class="font-semibold text-sm">${u.full_name}</div><div class="text-xs text-slate-500">${u.role}</div></div>
+      </div>
+      <div class="text-xs text-slate-500">${u.email||'—'}</div>
+      <div class="flex items-center justify-between"><span class="badge badge-blue">${u.access_level}</span>${statusBadge(u.status)}</div>
+      <div class="flex gap-2">${actBtns('team-user',u.id)}</div>
+    </div>`).join(''):emptyState('No team members');
+}
+
+// ── ENSURE STATE ──────────────────────────────────────────────────────
+async function ensureLots(){ if(!S.lots.length){const {data}=await sb.from('fl_lots').select('*').order('lot_number');S.lots=data||[];} }
+async function ensurePens(){ if(!S.pens.length){const {data}=await sb.from('fl_pens').select('*').order('name');S.pens=data||[];} }
+async function ensureRations(){ if(!S.rations.length){const {data}=await sb.from('fl_rations').select('*').order('name');S.rations=data||[];} }
+async function ensureTrucks(){ if(!S.trucks.length){const {data}=await sb.from('fl_trucks').select('*').order('name');S.trucks=data||[];} }
+async function ensureAnimals(){ if(!S.animals.length){const {data}=await sb.from('fl_animals').select('*').order('visual_id');S.animals=data||[];} }
+async function ensureProtocols(){ if(!S.protocols.length){const {data}=await sb.from('fl_treatment_protocols').select('*');S.protocols=data||[];} }
+async function ensureClients(){ if(!S.clients.length){const {data}=await sb.from('fl_clients').select('*').order('name');S.clients=data||[];} }
+async function ensureTeam(){ if(!S.team.length){const {data}=await sb.from('fl_team_users').select('*').order('full_name');S.team=data||[];} }
+
+// ── MODAL DEFINITIONS ─────────────────────────────────────────────────
+const modalDefs = {
+  lot:{title:'New Lot',table:'fl_lots',
+    fields:async()=>{await Promise.all([ensurePens(),ensureClients()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Lot Number *</label><input name="lot_number" required></div>
+        <div><label>Pen</label><select name="pen_id"><option value="">—</option>${S.pens.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+        <div><label>Client</label><select name="client_id"><option value="">—</option>${S.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+        <div><label>Entry Date</label><input type="date" name="entry_date" value="${today()}"></div>
+        <div><label>Projected Close Date</label><input type="date" name="projected_close_date"></div>
+        <div><label>Target Weight (lb)</label><input type="number" name="target_weight" min="0"></div>
+        <div><label>Entry Head *</label><input type="number" name="entry_head" min="0" required></div>
+        <div><label>Current Head</label><input type="number" name="current_head" min="0"></div>
+        <div><label>Status</label><select name="status"><option value="active">Active</option><option value="closed">Closed</option></select></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  pen:{title:'New Pen',table:'fl_pens',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Pen Name *</label><input name="name" required></div>
+      <div><label>Capacity (head)</label><input type="number" name="capacity" min="0"></div>
+      <div><label>Location</label><input name="location"></div>
+      <div><label>Type</label><select name="pen_type"><option value="standard">Standard</option><option value="hospital">Hospital</option><option value="processing">Processing</option></select></div>
+      <div><label>Status</label><select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  ration:{title:'New Ration',table:'fl_rations',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Ration Name *</label><input name="name" required></div>
+      <div><label>Phase</label><select name="ration_phase"><option value="starter">Starter</option><option value="transition">Transition</option><option value="finisher">Finisher</option></select></div>
+      <div><label>Day From</label><input type="number" name="day_from" min="1" value="1"></div>
+      <div><label>Day To</label><input type="number" name="day_to" min="1" placeholder="leave blank = open"></div>
+      <div><label>DM/Head (lb/day)</label><input type="number" name="dm_per_head" step="0.1"></div>
+      <div><label>Cost/Head ($/day)</label><input type="number" name="cost_per_head" step="0.01"></div>
+      <div><label>Status</label><select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  'lot-ration':{title:'Assign Ration to Lot',table:'fl_lot_rations',
+    fields:async()=>{await Promise.all([ensureLots(),ensureRations()]);
+      return `<div class="form-grid">
+        <div><label>Lot *</label><select name="lot_id" required><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Ration *</label><select name="ration_id" required><option value="">—</option>${S.rations.map(r=>`<option value="${r.id}">${r.name}</option>`).join('')}</select></div>
+        <div class="form-grid cols-2">
+          <div><label>Start Day</label><input type="number" name="start_day" value="1" min="1"></div>
+          <div><label>End Day</label><input type="number" name="end_day" min="1" placeholder="open"></div>
+        </div>
+      </div>`;
+    }},
+  'feeding-event':{title:'Log Feeding Event',table:'fl_feeding_events',
+    fields:async()=>{await Promise.all([ensureLots(),ensurePens(),ensureRations()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Lot *</label><select name="lot_id" required><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Pen</label><select name="pen_id"><option value="">—</option>${S.pens.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+        <div><label>Ration</label><select name="ration_id"><option value="">—</option>${S.rations.map(r=>`<option value="${r.id}">${r.name}</option>`).join('')}</select></div>
+        <div><label>Feed Date</label><input type="date" name="feed_date" value="${today()}"></div>
+        <div><label>Planned (lb)</label><input type="number" name="planned_lbs" step="0.1"></div>
+        <div><label>Delivered (lb)</label><input type="number" name="delivered_lbs" step="0.1"></div>
+        <div><label>Consumed (lb)</label><input type="number" name="consumed_lbs" step="0.1"></div>
+        <div><label>Recorded By</label><input name="recorded_by"></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  truck:{title:'Add Truck',table:'fl_trucks',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Truck Name *</label><input name="name" required></div>
+      <div><label>Capacity (lb)</label><input type="number" name="capacity_lbs" min="0"></div>
+      <div><label>Driver</label><input name="driver"></div>
+      <div><label>GPS ID</label><input name="gps_id"></div>
+      <div><label>Status</label><select name="status"><option value="available">Available</option><option value="in_route">In Route</option><option value="offline">Offline</option></select></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  'load-order':{title:'New Load Order',table:'fl_load_orders',
+    fields:async()=>{await Promise.all([ensureTrucks(),ensureRations()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Order # *</label><input name="order_number" required value="LO-${Date.now().toString().slice(-6)}"></div>
+        <div><label>Order Date</label><input type="date" name="order_date" value="${today()}"></div>
+        <div><label>Truck</label><select name="truck_id"><option value="">—</option>${S.trucks.map(t=>`<option value="${t.id}">${t.name}</option>`).join('')}</select></div>
+        <div><label>Ration</label><select name="ration_id"><option value="">—</option>${S.rations.map(r=>`<option value="${r.id}">${r.name}</option>`).join('')}</select></div>
+        <div><label>Planned (lb)</label><input type="number" name="planned_lbs" step="0.1"></div>
+        <div><label>Planned Time</label><input type="time" name="planned_time"></div>
+        <div><label>Driver</label><input name="driver"></div>
+        <div><label>Status</label><select name="status"><option value="pending">Pending</option><option value="loaded">Loaded</option><option value="delivered">Delivered</option></select></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  'bunk-score':{title:'Record Bunk Score',table:'fl_bunk_scores',
+    fields:async()=>{await Promise.all([ensurePens(),ensureLots()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Pen *</label><select name="pen_id" required><option value="">—</option>${S.pens.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+        <div><label>Lot</label><select name="lot_id"><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Score (0=clean … 3=full) *</label><input type="number" name="score" min="0" max="3" step="0.5" required></div>
+        <div><label>Score Date</label><input type="date" name="score_date" value="${today()}"></div>
+        <div><label>Recorded By</label><input name="recorded_by"></div>
+        <div><label>Action Taken</label><input name="action_taken"></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  animal:{title:'Register Animal',table:'fl_animals',afterSave:loadAnimals,
+    fields:async()=>{await Promise.all([ensureLots(),ensurePens()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Visual ID *</label><input name="visual_id" required></div>
+        <div><label>RFID</label><input name="rfid"></div>
+        <div><label>Breed</label><input name="breed"></div>
+        <div><label>Gender</label><select name="gender"><option value="steer">Steer</option><option value="heifer">Heifer</option><option value="bull">Bull</option></select></div>
+        <div><label>Lot</label><select name="lot_id"><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Pen</label><select name="pen_id"><option value="">—</option>${S.pens.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+        <div><label>Birth Date</label><input type="date" name="birth_date"></div>
+        <div><label>Entry Date</label><input type="date" name="entry_date" value="${today()}"></div>
+        <div><label>Entry Weight (lb)</label><input type="number" name="entry_weight" step="0.1"></div>
+        <div><label>Current Weight (lb)</label><input type="number" name="current_weight" step="0.1"></div>
+        <div><label>Status</label><select name="status"><option value="on_feed">On Feed</option><option value="in_treatment">In Treatment</option><option value="sold">Sold</option><option value="dead">Dead</option></select></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  weight:{title:'Record Weight',table:'fl_weight_records',
+    fields:async()=>{await Promise.all([ensureAnimals(),ensureLots()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Animal *</label><select name="animal_id" required><option value="">—</option>${S.animals.map(a=>`<option value="${a.id}">${a.visual_id}</option>`).join('')}</select></div>
+        <div><label>Lot</label><select name="lot_id"><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Weight (lb) *</label><input type="number" name="weight" step="0.1" required></div>
+        <div><label>Recorded By</label><input name="recorded_by"></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  treatment:{title:'Record Treatment',table:'fl_treatments',
+    fields:async()=>{await Promise.all([ensureAnimals(),ensureLots(),ensureProtocols()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Animal *</label><select name="animal_id" required><option value="">—</option>${S.animals.map(a=>`<option value="${a.id}">${a.visual_id}</option>`).join('')}</select></div>
+        <div><label>Lot</label><select name="lot_id"><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Protocol</label><select name="protocol_id"><option value="">—</option>${S.protocols.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+        <div><label>Diagnosis *</label><input name="diagnosis" required></div>
+        <div><label>Drug</label><input name="drug"></div>
+        <div><label>Dose</label><input name="dose"></div>
+        <div><label>Treatment Day</label><input type="number" name="treatment_day" min="1" value="1"></div>
+        <div><label>Treatment Date</label><input type="date" name="treatment_date" value="${today()}"></div>
+        <div><label>Cost ($)</label><input type="number" name="cost" step="0.01"></div>
+        <div><label>Treated By</label><input name="treated_by"></div>
+        <div><label>Withdrawal Days</label><input type="number" name="withdrawal_days" min="0" value="0"></div>
+        <div><label>Outcome</label><select name="outcome"><option value="in_treatment">In Treatment</option><option value="recovered">Recovered</option><option value="dead">Dead</option></select></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  protocol:{title:'New Protocol',table:'fl_treatment_protocols',
+    fields:async()=>`<div class="form-grid">
+      <div><label>Protocol Name *</label><input name="name" required></div>
+      <div><label>Diagnosis</label><input name="diagnosis"></div>
+      <div><label>Status</label><select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  'feed-inv':{title:'Add Feed Item',table:'fl_feed_inventory',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Ingredient *</label><input name="ingredient" required></div>
+      <div><label>Category</label><select name="category"><option value="grain">Grain</option><option value="roughage">Roughage</option><option value="byproduct">Byproduct</option><option value="supplement">Supplement</option></select></div>
+      <div><label>Stock (tons)</label><input type="number" name="quantity_tons" step="0.1" min="0" value="0"></div>
+      <div><label>Min Stock (tons)</label><input type="number" name="min_stock_tons" step="0.1" min="0"></div>
+      <div><label>$/Ton</label><input type="number" name="cost_per_ton" step="0.01"></div>
+      <div><label>Supplier</label><input name="supplier"></div>
+      <div><label>Last Delivery</label><input type="date" name="last_delivery_date"></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  'med-inv':{title:'Add Medication',table:'fl_med_inventory',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Drug Name *</label><input name="drug_name" required></div>
+      <div><label>Unit</label><select name="unit"><option value="ml">ml</option><option value="vial">vial</option><option value="tablet">tablet</option><option value="g">g</option></select></div>
+      <div><label>Quantity *</label><input type="number" name="quantity" min="0" required value="0"></div>
+      <div><label>Min Stock</label><input type="number" name="min_stock" min="0"></div>
+      <div><label>$/Unit</label><input type="number" name="cost_per_unit" step="0.01"></div>
+      <div><label>Withdrawal Days</label><input type="number" name="withdrawal_days" min="0" value="0"></div>
+      <div><label>Expiry Date</label><input type="date" name="expiry_date"></div>
+      <div><label>Supplier</label><input name="supplier"></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  client:{title:'New Client',table:'fl_clients',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Company Name *</label><input name="name" required></div>
+      <div><label>Contact Person</label><input name="contact_person"></div>
+      <div><label>Email</label><input type="email" name="email"></div>
+      <div><label>Phone</label><input name="phone"></div>
+      <div><label>Tax ID / RFC</label><input name="tax_id"></div>
+      <div><label>Status</label><select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+    </div>
+    <div class="mt-3"><label>Address</label><textarea name="address" rows="2"></textarea></div>
+    <div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  invoice:{title:'New Invoice',table:'fl_invoices',
+    fields:async()=>{await Promise.all([ensureClients(),ensureLots()]);
+      return `<div class="form-grid cols-2">
+        <div><label>Invoice # *</label><input name="invoice_number" required value="INV-${Date.now().toString().slice(-6)}"></div>
+        <div><label>Client *</label><select name="client_id" required><option value="">—</option>${S.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+        <div><label>Lot</label><select name="lot_id"><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Issue Date</label><input type="date" name="issue_date" value="${today()}"></div>
+        <div><label>Due Date</label><input type="date" name="due_date"></div>
+        <div><label>Total ($)</label><input type="number" name="total" step="0.01"></div>
+        <div><label>Paid Amount ($)</label><input type="number" name="paid_amount" step="0.01" value="0"></div>
+        <div><label>Status</label><select name="status"><option value="pending">Pending</option><option value="paid">Paid</option><option value="overdue">Overdue</option></select></div>
+      </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`;
+    }},
+  device:{title:'Register Device',table:'fl_devices',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Device Name *</label><input name="name" required></div>
+      <div><label>Type *</label><select name="device_type" required><option value="livestock_scale">Livestock Scale</option><option value="eid_reader">EID Reader</option><option value="micro_ingredient">Micro Ingredient</option><option value="gps_tracker">GPS Tracker</option><option value="camera">Camera</option></select></div>
+      <div><label>Location</label><input name="location"></div>
+      <div><label>Serial Number</label><input name="serial_number"></div>
+      <div><label>Battery %</label><input type="number" name="battery_pct" min="0" max="100"></div>
+      <div><label>Status</label><select name="status"><option value="online">Online</option><option value="offline">Offline</option></select></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  },
+  task:{title:'New Field Task',table:'fl_field_tasks',
+    fields:async()=>{await Promise.all([ensurePens(),ensureLots(),ensureTeam()]);
+      return `<div class="form-grid cols-2">
+        <div style="grid-column:1/-1"><label>Task Title *</label><input name="title" required></div>
+        <div><label>Assigned To</label><select name="assigned_to"><option value="">Unassigned</option>${S.team.map(u=>`<option value="${u.id}">${u.full_name}</option>`).join('')}</select></div>
+        <div><label>Pen</label><select name="pen_id"><option value="">—</option>${S.pens.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+        <div><label>Lot</label><select name="lot_id"><option value="">—</option>${S.lots.map(l=>`<option value="${l.id}">${l.lot_number}</option>`).join('')}</select></div>
+        <div><label>Priority</label><select name="priority"><option value="low">Low</option><option value="normal">Normal</option><option value="high">High</option><option value="critical">Critical</option></select></div>
+        <div><label>Due Date</label><input type="date" name="due_date"></div>
+        <div><label>Status</label><select name="status"><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="completed">Completed</option></select></div>
+      </div><div class="mt-3"><label>Description</label><textarea name="description" rows="2"></textarea></div>`;
+    }},
+  'team-user':{title:'Add Team Member',table:'fl_team_users',
+    fields:async()=>`<div class="form-grid cols-2">
+      <div><label>Full Name *</label><input name="full_name" required></div>
+      <div><label>Role *</label><input name="role" required placeholder="Feedlot Manager…"></div>
+      <div><label>Email</label><input type="email" name="email"></div>
+      <div><label>Phone</label><input name="phone"></div>
+      <div><label>Access Level</label><select name="access_level"><option value="operator">Operator</option><option value="admin">Admin</option><option value="nutritionist">Nutritionist</option><option value="readonly">Read-only</option></select></div>
+      <div><label>Initials (2 chars)</label><input name="avatar_initials" maxlength="2" placeholder="JM"></div>
+      <div><label>Status</label><select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+    </div><div class="mt-3"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>`
+  }
+};
+
+// ── OPEN MODAL ────────────────────────────────────────────────────────
+async function openModal(type, id=null){
+  const def = modalDefs[type];
+  if(!def){ toast('Unknown modal: '+type,'error'); return; }
+  currentModal=type; editId=id;
+  document.getElementById('modalTitle').textContent = id ? def.title.replace(/^(New|Add|Register)\s/,'Edit ') : def.title;
+  document.getElementById('modalFields').innerHTML='<div class="text-center py-6 text-slate-400">Loading…</div>';
+  document.getElementById('modalOverlay').classList.add('open');
+  const html = await def.fields();
+  document.getElementById('modalFields').innerHTML=html;
+  if(id){
+    const {data}=await sb.from(def.table).select('*').eq('id',id).single();
+    if(data) populateForm(data);
+  }
+}
+
+function populateForm(data){
+  Object.entries(data).forEach(([key,val])=>{
+    const el=document.querySelector(`#modalFields [name="${key}"]`);
+    if(!el||val==null) return;
+    if(el.tagName==='SELECT'){ for(const o of el.options){ if(o.value===String(val)){o.selected=true;break;} }}
+    else if(el.type==='date'&&val){ el.value=val.split('T')[0]; }
+    else { el.value=val; }
+  });
+}
+
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); currentModal=null; editId=null; }
+function closeModalOnBg(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+
+// ── SUBMIT ────────────────────────────────────────────────────────────
+async function submitModal(e){
+  e.preventDefault();
+  const def=modalDefs[currentModal]; if(!def) return;
+  const fd=new FormData(document.getElementById('modalForm'));
+  const payload={};
+  for(const [k,v] of fd.entries()) payload[k]=v===''?null:v;
+
+  // Cast integers
+  ['entry_head','current_head','capacity','day_from','day_to','start_day','end_day','treatment_day','withdrawal_days','battery_pct','quantity','min_stock'].forEach(f=>{ if(payload[f]!=null) payload[f]=parseInt(payload[f]); });
+  // Cast floats
+  ['target_weight','entry_weight','current_weight','weight','planned_lbs','delivered_lbs','consumed_lbs','loaded_lbs','score','dm_per_head','cost_per_head','cost','cost_per_ton','cost_per_unit','quantity_tons','min_stock_tons','capacity_lbs','total','paid_amount'].forEach(f=>{ if(payload[f]!=null) payload[f]=parseFloat(payload[f]); });
+  // Null empty UUIDs
+  ['pen_id','lot_id','client_id','ration_id','truck_id','protocol_id','animal_id','assigned_to'].forEach(f=>{ if(!payload[f]) payload[f]=null; });
+
+  const btn=document.getElementById('modalSubmitBtn');
+  btn.textContent='Saving…'; btn.disabled=true;
+  let error;
+  if(editId){
+    payload.updated_at=new Date().toISOString();
+    ({error}=await sb.from(def.table).update(payload).eq('id',editId));
+  } else {
+    ({error}=await sb.from(def.table).insert(payload));
+  }
+  btn.textContent='Save'; btn.disabled=false;
+  if(error){ toast('Error: '+error.message,'error'); return; }
+  toast(editId?'Updated successfully':'Saved successfully');
+  closeModal();
+  if(def.afterSave) def.afterSave(); else loadModule(currentModule);
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────
+async function deleteRecord(type, id){
+  if(!confirm('Delete this record? This cannot be undone.')) return;
+  const def=modalDefs[type]; if(!def) return;
+  const {error}=await sb.from(def.table).delete().eq('id',id);
+  if(error){ toast('Delete failed: '+error.message,'error'); return; }
+  toast('Deleted','info');
+  if(def.afterSave) def.afterSave(); else loadModule(currentModule);
+}
+
+// ── REALTIME ──────────────────────────────────────────────────────────
+sb.channel('feedlot-live')
+  .on('postgres_changes',{event:'*',schema:'public',table:'fl_lots'},()=>{ if(currentModule==='overview') loadOverview(); })
+  .on('postgres_changes',{event:'*',schema:'public',table:'fl_animals'},()=>{ if(currentModule==='livestock') loadAnimals(); })
+  .on('postgres_changes',{event:'*',schema:'public',table:'fl_field_tasks'},()=>{ if(currentModule==='fieldops') loadTasks(); })
+  .on('postgres_changes',{event:'*',schema:'public',table:'fl_bunk_scores'},()=>{ if(currentModule==='monitoring') loadBunkScores(); })
+  .subscribe();
+
+// ── BOOT ──────────────────────────────────────────────────────────────
+loadOverview();
+</script>
+</body>
+</html>
