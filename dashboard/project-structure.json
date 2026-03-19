@@ -1,0 +1,170 @@
+{
+  "project": "CattleGrow - Feedlot Operating System",
+  "version": "1.0.0",
+  "stack": {
+    "framework": "React 19",
+    "bundler": "Vite 8",
+    "styling": "Tailwind CSS 4",
+    "charts": "Recharts",
+    "routing": "React Router DOM",
+    "icons": "Lucide React"
+  },
+  "modules": [
+    {
+      "id": 1,
+      "name": "Dashboard Overview",
+      "route": "/",
+      "file": "src/pages/Dashboard.jsx",
+      "features": [
+        "Real-time KPIs (total head, ADG, feed cost, conversion, mortality, occupancy)",
+        "Critical alerts banner",
+        "Performance trend chart (6 months)",
+        "Lot status distribution (pie chart)",
+        "Planned vs actual feed consumption (bar chart)",
+        "Active lots summary table"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Feedlot Operations",
+      "route": "/operations",
+      "file": "src/pages/FeedlotOperations.jsx",
+      "features": [
+        "Lot tracking table with full details (owner, head, DOF, weight, ration, ADG, COG)",
+        "Filterable by status (receiving, step-up, feeding, closeout)",
+        "Visual pen map (grid layout with capacity and occupancy)",
+        "Pen movement history log",
+        "Lifecycle progress bars per lot"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Advanced Feeding System",
+      "route": "/feeding",
+      "file": "src/pages/FeedingSystem.jsx",
+      "features": [
+        "Ration cards (DM%, CP%, NEL, ingredients, cost/ton)",
+        "Diet assignment table with auto-transition tracking",
+        "Step-up feeding protocol with roughage progression",
+        "Automatic ration transition rules",
+        "Weight projection charts (projected vs actual)",
+        "Cost of gain comparison by lot",
+        "Closeout projection calculator",
+        "Feed delivery plan with status tracking"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Mixer & Feeding Logistics",
+      "route": "/mixer",
+      "file": "src/pages/MixerLogistics.jsx",
+      "features": [
+        "Mixer status cards (capacity, load, mix time)",
+        "Feed truck real-time status (driver, route, deliveries)",
+        "Feeding cycle chart (AM/PM loads per mixer)",
+        "Route optimization (pens, distance, time, efficiency %)"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Real-Time Feeding Monitoring",
+      "route": "/monitoring",
+      "file": "src/pages/FeedingMonitoring.jsx",
+      "features": [
+        "Visual bunk score cards (color-coded 0–2+)",
+        "Planned vs actual intake per pen with variance %",
+        "Hourly feed consumption chart",
+        "Weekly consumption trend (planned vs actual)",
+        "Feed inventory table with days-remaining bars and status"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Livestock Management",
+      "route": "/livestock",
+      "file": "src/pages/LivestockManagement.jsx",
+      "features": [
+        "Weight projection chart (projected vs actual over weeks)",
+        "ADG performance by lot (bar chart vs target)",
+        "Active lots performance table",
+        "Closeout report analytics (head in/out, F:G, COG, death loss, profit)"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Animal Health",
+      "route": "/health",
+      "file": "src/pages/AnimalHealth.jsx",
+      "features": [
+        "Health records table (animal EID, diagnosis, treatment, temp, status)",
+        "Treatment protocols (BRD pulls, foot rot, pinkeye, arrival processing)",
+        "Chute processing workflow (6-step sequence with timing)",
+        "Diagnosis distribution pie chart",
+        "Weekly treatment activity chart (pulls, treatments, re-treats)"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Inventory Management",
+      "route": "/inventory",
+      "file": "src/pages/Inventory.jsx",
+      "features": [
+        "Feed inventory with reorder points and days supply",
+        "Medication inventory with cost/dose tracking",
+        "Grain bank tracking per client (delivered, used, balance)",
+        "7-day inventory trend chart",
+        "Action buttons for critical/warning items"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Financial Management",
+      "route": "/financial",
+      "file": "src/pages/Financial.jsx",
+      "features": [
+        "Monthly P&L chart (revenue, expenses, net profit)",
+        "Expense breakdown pie chart (feed, operations, health, labor)",
+        "Client billing summary (feed cost, yardage, health, total due)",
+        "Interest & service fee calculations for overdue accounts",
+        "Invoice generation and export"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Hardware & Equipment",
+      "route": "/hardware",
+      "file": "src/pages/Hardware.jsx",
+      "features": [
+        "Equipment status cards (scales, EID readers, micro-ingredient, load cells, weather)",
+        "Online/offline monitoring with troubleshoot actions",
+        "Data integration flow diagram",
+        "Mobile field operations (feed truck app, pen rider app, processing app)"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Users & Collaboration",
+      "route": "/users",
+      "file": "src/pages/Users.jsx",
+      "features": [
+        "Team member cards with role badges",
+        "Role-based access control matrix (admin, operator, veterinarian, nutritionist)",
+        "External stakeholder access management",
+        "Activity log with timestamped actions"
+      ]
+    }
+  ],
+  "components": {
+    "Layout": "src/components/Layout.jsx — Sidebar navigation, header with search & alerts, responsive shell",
+    "KpiCard": "src/components/KpiCard.jsx — Reusable metric card with icon, value, trend indicator",
+    "StatusBadge": "src/components/StatusBadge.jsx — Color-coded status pill (30+ status variants)"
+  },
+  "data": {
+    "mockData": "src/data/mockData.js — Comprehensive mock dataset (lots, pens, rations, schedules, health, inventory, financials, users, alerts, equipment)"
+  },
+  "scripts": {
+    "dev": "npm run dev — Start development server",
+    "build": "npm run build — Production build",
+    "preview": "npm run preview — Preview production build"
+  }
+}
