@@ -27,20 +27,6 @@ body {
     text-shadow: 0 0 10px rgba(45, 90, 39, 0.2);
 }
 
-/* Navbar adjustments */
-#navbar.scrolled {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 12px 0;
-}
-
-#navbar.scrolled .brand-font,
-#navbar.scrolled .hover\:text-ag-green {
-    color: var(--ag-dark);
-}
-
 /* Animations */
 @keyframes fadeInUp {
     from {
@@ -73,9 +59,15 @@ body {
 #navbar.scrolled {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(15, 23, 42, 0.90);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#navbar.scrolled .brand-font,
+#navbar.scrolled a {
+    color: #ffffff;
 }
 
 /* Custom Scrollbar */
